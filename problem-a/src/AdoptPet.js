@@ -11,7 +11,8 @@ class AdoptPage extends Component {
   }
 
   componentDidMount(){
-    let petName = ''; //REPLACE THIS WITH CORRECT VALUE
+    // let petName = ''; //REPLACE THIS WITH CORRECT VALUE
+    let petName = this.props.match.params.petName;
 
     //pretend we loaded external data    
     let petObj =  _.find(SAMPLE_DOGS, {name: petName}); //find pet in data

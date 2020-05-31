@@ -5,6 +5,8 @@ import './App.css'; //import css file!
 
 import SAMPLE_DOGS from './dogs.json'; //a sample list of dogs (model)
 
+import {Route, Switch, Link, Redirect, NavLink} from 'react-router-dom';
+
 class App extends Component {
   constructor(props){
     super(props);
@@ -17,11 +19,15 @@ class App extends Component {
   }
 
   render() {
+
+    let renderPetList = (props) => <PetList {...props} pets={this.state.pets} />
+
     return (
       <div>
         <header className="jumbotron jumbotron-fluid py-4">
           <div className="container">
-            <h1>Adopt a Pet</h1>
+            {/* <h1>Adopt a Pet</h1> */}
+            <Link to="/"><h1>Adopt a Pet</h1></Link>
           </div>
         </header>
       
@@ -31,7 +37,14 @@ class App extends Component {
               <AboutNav />
             </div>
             <div className="col-9">
-              <PetList pets={this.state.pets} />
+              <Switch>
+                <Route exact path="/" render={renderPetList} />
+                <Route path="/about" component={AboutPage} />
+                <Route path="/resources" component={ResourcesPage} />
+                <Route path="/adopt/:petName" component={AdoptPage} />
+                <Redirect to="/" />
+              </Switch>
+              
             </div>
           </div>
         </main>
@@ -50,9 +63,9 @@ class AboutNav extends Component {
       <nav id="aboutLinks">
         <h2>About</h2>
         <ul className="list-unstyled">
-          <li><a href="/">Adopt a Pet</a></li>
-          <li><a href="/about">About Us</a></li>
-          <li><a href="/resources">Resources</a></li>
+          <li><NavLink exact to="/" activeClassNAme="activeLink">Adopt a Pet</NavLink></li>
+          <li><NavLink to="/about" activeClassName="activeLink">About Us</NavLink></li>
+          <li><NavLink to="/resources" activeClassName="activeLink">Resources</NavLink></li>
         </ul>
       </nav>
     );
@@ -85,9 +98,14 @@ class PetCard extends Component {
 
   handleClick = () => {
     console.log("You clicked on", this.props.pet.name);
+    this.setState({redirectTo:this.props.pet.name});
   }
 
   render() {
+
+    if (this.state.redirectTo){
+      return <Redirect push to={"/adopt/" + this.state.redirectTo} />
+    }
     let pet = this.props.pet; //shortcut
     return (
       <div className="card clickable" onClick={this.handleClick}>
